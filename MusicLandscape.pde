@@ -1,6 +1,6 @@
 int r = 100;
-int streifen = 40;
-int l = 600/40;
+int streifen = 54;
+int l = 600/streifen;
 int a = 0;
 void setup(){
   println(l);
@@ -13,7 +13,7 @@ void setup(){
 void draw(){
   
  for(int i = 0; i< streifen; i++){ 
-   r = (int)random(10, 40);
+   r = (int)random(10, streifen);
    a = (int)map(r, 10, 40, 80, 255);
    if(a<100)
      fill(0,a);
@@ -32,7 +32,7 @@ void drawStar(float radius, int x, int a){
   radius = map(r, 60,200,2,5);
   
   pushMatrix();
-  translate(x, height/4);
+  translate(x, height/4+random(-10,10));
 
 int numPoints=5;
 float angle=TWO_PI/(float)numPoints;
