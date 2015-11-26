@@ -2,7 +2,7 @@
 Table data;
 
 int streifen;
-int scale = 1;
+int scale = 2;
 int l = 40*scale;
 int w;
 int r = 0;
@@ -129,7 +129,6 @@ void drawFlower(int x, TableRow row, PGraphics pg) {
   else
     pg.stroke(0);
     
-  r = (int)map(r, 60, 200, 50, 140);
 
   translate(x, height-rad);
   pg.line(0, height, 0, 0);
@@ -175,11 +174,11 @@ void keyPressed()
     println("SAVING to test.png");
     int mySaveScale = scale;
     PGraphics pg = createGraphics(int(width*mySaveScale), int(height*mySaveScale), P2D);
-    //pg.beginDraw();
-   // pg.scale(mySaveScale);
+    pg.beginDraw();
+    pg.scale(mySaveScale);
     drawStuff(pg);
-    //pg.save("test.png");
-   // pg.endDraw();
+    pg.save("test.png");
+    pg.endDraw();
   }
 }
 
