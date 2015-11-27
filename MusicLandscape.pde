@@ -5,7 +5,7 @@ Table data;
 
 
 int streifen;
-int scale = 4;
+int scale = 3;
 int l = 40*scale;
 int w;
 int r = 0;
@@ -18,8 +18,8 @@ float highMax = -0.2;
 float highMin = -0.7;
 float high2Max = -0.9;
 float high2Min = -0.7;
-boolean white = false;
-String artist = "u2";
+boolean white = true ;
+String artist = "amy";
 
 color c; 
 void setup() {
@@ -78,14 +78,14 @@ void drawHill(int i, TableRow row, PGraphics pg) {
       pg.fill(255, alpha);
   }
   pg.noStroke();
-  pg.ellipse(i*l+150, height+rad/10, rad *1.5, rad);
+  pg.ellipse(i*l+200, height+rad/10, rad *1.5, rad);
 }
 
 
 void drawFlower(int x, TableRow row, PGraphics pg) {
   pushMatrix();
 
-  x = x+150;
+  x = x+200;
   float dp = row.getFloat("mid");    
   float alpha = map(abs(dp), midMin, midMax, 50, 255);
   int points = (int)(map(abs(dp), midMin, midMax, 1, 14)+0.5);
@@ -123,7 +123,7 @@ void drawCloud(int x, TableRow row, PGraphics pg) {
   int numCircles = (int)(map(dp, highMin, highMax, 1, 10)+0.5);
   float alpha = map(dp, highMin, highMax, 50, 255);
 
-  x = x +150;
+  x = x +200;
   pg.noFill();
   if (dp < 0) {
     pg.stroke(c, alpha);
@@ -148,7 +148,7 @@ void drawStar(int x, TableRow row, PGraphics pg) {
   float alpha = map(dp, high2Min, high2Max, 50, 255);
 
   pushMatrix();
-  translate(x+150, height/4+rad);
+  translate(x+200, height/4+rad);
 
   float angle=TWO_PI/(float)numPoints;
 
