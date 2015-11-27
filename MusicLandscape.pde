@@ -1,8 +1,11 @@
+import processing.pdf.*;
+
 
 Table data;
 
+
 int streifen;
-int scale = 2;
+int scale = 1;
 int l = 40*scale;
 int w;
 int r = 0;
@@ -15,10 +18,11 @@ float highMax = -0.2;
 float highMin = -0.7;
 float high2Max = -0.9;
 float high2Min = -0.7;
- 
+
 void setup() {
+
   importTable();
-  size(w*scale, 250*scale, P2D); 
+  size(w*scale, 250*scale);//, PDF, "file.pdf"); 
   noLoop();
   background(255);
 }
@@ -27,68 +31,57 @@ void setup() {
 void draw() {
   //scale(5);
   drawStuff(this.g);
-  save("pic.tiff");
-  
+  // exit();
 }
 
-void drawStuff(PGraphics pg){
-  
- //scale(2);
-  for (int i = 0; i< data.getRowCount(); i++) { 
+void drawStuff(PGraphics pg) {
+  strokeWeight(1.5);
+  for (int i = 0; i< data.getRowCount (); i++) { 
     TableRow row = data.getRow(i);
 
     drawHill(i, row, pg);
     drawFlower(i*l, row, pg);
     drawCloud( i*l, row, pg);
     drawStar(i*l, row, pg);
-  
   }
- 
-  save("pic.tif");  
 }
 
 
 void importTable() {
-  data = loadTable("beyonce.csv", "header");
-  streifen = data.getRowCount(); 
- /* TableRow max = data.getRow(0);
-  lowMax = max.getFloat("minmaxlow");
-  midMax= max.getFloat("minmaxmid");
-  highMax = max.getFloat("minmaxhigh");
-  high2Max = max.getFloat("minmaxhigh2");
-  TableRow min = data.getRow(1);
-  lowMin = min.getFloat("minmaxlow");
-  midMin= min.getFloat("minmaxmid");
-  highMin = min.getFloat("minmaxhigh");
-  high2Min = min.getFloat("minmaxhigh2");
-  */
-  w = streifen*(l);
+  data = loadTable("amy.csv", "header");
+  streifen = data.getRowCount();
+  w = streifen*l;
 }
 
 
 void drawHill(int i, TableRow row, PGraphics pg) {
   float dp = row.getFloat("low");
-  float rad = map(dp, lowMin, lowMax, 10*scale,100*scale);    
+  float rad = map(dp, lowMin, lowMax, 10*scale, 100*scale);    
   float alpha = map(dp, lowMin, lowMax, 10, 120);
-  
-  pg.fill(0, alpha);
+
+  if (dp < 0) {
+    pg.fill(166, 215, 255);
+  } else {
+    pg.fill(0, alpha);
+  }
   pg.noStroke();
-  pg.ellipse(i*l, height+((r/4)), rad *1.5, rad);
+
+  pg.ellipse(i*l, height+rad/10, rad *1.5, rad);
+  stroke(255, 0, 0);
 }
 
 void drawStar(int x, TableRow row, PGraphics pg) {
-  //r and a depending on value
-
   float dp = row.getFloat("high2");
-  float rad = map(dp, high2Min, high2Max, 1*scale,5*scale); 
+  float rad = 5; 
+  float numPoints = (int)(map(dp, high2Min, high2Max, 1, 5)+0.5);
   float alpha = map(dp, high2Min, high2Max, 10, 255);
 
   pushMatrix();
   translate(x, height/4+rad);
-  int numPoints=5;
+
   float angle=TWO_PI/(float)numPoints;
 
-  pg.stroke(166, 215, 255);
+  pg.stroke(166, 215, 255, alpha);
 
   for (int i=0; i<numPoints; i++)
   {
@@ -99,18 +92,23 @@ void drawStar(int x, TableRow row, PGraphics pg) {
 
 
 void drawCloud(int x, TableRow row, PGraphics pg) {
+
   float dp = row.getFloat("high");
-  float rad = map(dp, highMin, highMax, 10*scale,40*scale); 
+  int rad = (int)(map(dp, highMin, highMax, 1, 10)+0.5);
   float alpha = map(dp, highMin, highMax, 100, 255);
 
-  //r and a depending on value
+
+
   pg.noFill();
-   if(dp < 0)
-    pg.stroke(166, 215, 255);
+  if (dp < 0)
+    pg.stroke(166, 215, 255, alpha);
   else
-    pg.stroke(0);
-  for (int rr = 5; rr < rad; rr +=5*scale) {
+    pg.stroke(0, alpha);
+
+  int rr = 5;
+  for (int i = 0; i <= rad; i++) {
     pg.ellipse(x, height/2-rad, rr*1.5, rr);
+    rr +=5*scale;
   }
 }
 
@@ -120,50 +118,26 @@ void drawFlower(int x, TableRow row, PGraphics pg) {
 
 
   float dp = row.getFloat("mid");
-  float rad = map(abs(dp), midMin, midMax, 50*scale,90*scale);    
-  float alpha = map(abs(dp), highMin, highMax, 10, 255);
-  int points = (int)(map(abs(dp), highMin, highMax, 3,10));
-  
-  if(dp < 0)
-    pg.stroke(166, 215, 255);
+  float rad = map(abs(dp), midMin, midMax, 50*scale, 90*scale);    
+  float alpha = map(abs(dp), midMin, midMax, 10, 255);
+  int points = (int)(map(abs(dp), midMin, midMax, 1, 14)+0.5);
+
+
+  if (dp < 0)
+    pg.stroke(166, 215, 255, alpha);
   else
-    pg.stroke(0);
-    
+    pg.stroke(0, alpha);
+
 
   translate(x, height-rad);
   pg.line(0, height, 0, 0);
 
-  //depending on value
-  int numPoints=(int)random(3, 15);
 
   float angle=(PI/(float)points);
   rotate(-PI/2);
   for (int i=0; i<points; i++)
   {
     pg.line(0, 0, 15*sin(angle*i)*1, 15*cos(angle*i)*1);
-  }   
-  popMatrix();
-}
-
-void drawTree(int r, int x, int a, TableRow row) {
-  pushMatrix();
-
-  //a depending on value
-  stroke(255, a);
-  r = (int)map(r, 60, 200, 50, 140);
-
-  //r also depending on value????
-  translate(x, height-r);
-  line(0, height, 0, 0);
-
-  //depending on value
-  int numPoints=(int)random(3, 15);
-
-  float angle=(PI/(float)numPoints);
-  rotate(-PI/2);
-  for (int i=0; i<numPoints; i++)
-  {    
-    line(0-i*3, 0, 15*sin(angle*i)*3, 15*cos(angle*i));
   }   
   popMatrix();
 }
@@ -181,9 +155,4 @@ void keyPressed()
     pg.endDraw();
   }
 }
-
-
-
-
-
 
