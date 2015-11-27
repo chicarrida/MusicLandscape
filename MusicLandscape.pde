@@ -5,7 +5,7 @@ Table data;
 
 
 int streifen;
-int scale = 3;
+int scale = 4;
 int l = 40*scale;
 int w;
 int r = 0;
@@ -20,8 +20,10 @@ float high2Max = -0.9;
 float high2Min = -0.7;
 boolean white = false;
 String artist = "u2";
-void setup() {
 
+color c; 
+void setup() {
+ c = color(0,220,255);
   importTable();
   if (white)
     size(w*scale, 250*scale, PDF, artist+"_white_scale_"+scale+".pdf"); 
@@ -31,7 +33,7 @@ void setup() {
   if (white)
     background(255);
   else 
-    background(0);
+    background(80);
 }
 
 
@@ -43,7 +45,7 @@ void draw() {
 }
 
 void drawStuff(PGraphics pg) {
-  pg.strokeWeight(2.5);
+  pg.strokeWeight(6);
   for (int i = 0; i< data.getRowCount (); i++) { 
     TableRow row = data.getRow(i);
 
@@ -65,10 +67,10 @@ void importTable() {
 void drawHill(int i, TableRow row, PGraphics pg) {
   float dp = row.getFloat("low");
   float rad = map(dp, lowMin, lowMax, 10*scale, 100*scale);    
-  float alpha = map(dp, lowMin, lowMax, 10, 120);
+  float alpha = map(dp, lowMin, lowMax, 50, 120);
 
   if (dp < 0) {
-    pg.fill(166, 215, 255);
+    pg.fill(c);
   } else {
     if (white)
       pg.fill(0, alpha);
@@ -79,65 +81,17 @@ void drawHill(int i, TableRow row, PGraphics pg) {
   pg.ellipse(i*l+150, height+rad/10, rad *1.5, rad);
 }
 
-void drawStar(int x, TableRow row, PGraphics pg) {
-  float dp = row.getFloat("high2");
-  float rad = 5*scale; 
-  float numPoints = (int)(map(dp, high2Min, high2Max, 1, 5)+0.5);
-  float alpha = map(dp, high2Min, high2Max, 10, 255);
-
-  pushMatrix();
-  translate(x+150, height/4+rad);
-
-  float angle=TWO_PI/(float)numPoints;
-
-  pg.stroke(166, 215, 255, alpha);
-
-  for (int i=0; i<numPoints; i++)
-  {
-    pg.line(0, 0, rad*sin(angle*i)*1, rad*cos(angle*i)*1);
-  }  
-  popMatrix();
-}
-
-
-void drawCloud(int x, TableRow row, PGraphics pg) {
-
-  float dp = row.getFloat("high");
-  int numCircles = (int)(map(dp, highMin, highMax, 1, 10)+0.5);
-  float alpha = map(dp, highMin, highMax, 100, 255);
-
-
-  x = x +150;
-  pg.noFill();
-  if (dp < 0) {
-    pg.stroke(166, 215, 255, alpha);
-  } else {
-
-    if (white)
-      pg.stroke(0, alpha);
-    else
-      pg.stroke(255, alpha);
-  }
-
-  int rr = 5*scale;
-  for (int i = 0; i <= numCircles; i++) {
-    pg.ellipse(x, height/2-numCircles, rr*1.5, rr);
-    rr +=5*scale;
-  }
-}
-
 
 void drawFlower(int x, TableRow row, PGraphics pg) {
   pushMatrix();
 
   x = x+150;
   float dp = row.getFloat("mid");    
-  float alpha = map(abs(dp), midMin, midMax, 10, 255);
+  float alpha = map(abs(dp), midMin, midMax, 50, 255);
   int points = (int)(map(abs(dp), midMin, midMax, 1, 14)+0.5);
 
-
   if (dp < 0) {
-    pg.stroke(166, 215, 255, alpha);
+    pg.stroke(c, alpha);
   } else {
     if (white)
       pg.stroke(0, alpha);
@@ -158,6 +112,56 @@ void drawFlower(int x, TableRow row, PGraphics pg) {
   }   
   popMatrix();
 }
+
+
+
+
+
+void drawCloud(int x, TableRow row, PGraphics pg) {
+
+  float dp = row.getFloat("high");
+  int numCircles = (int)(map(dp, highMin, highMax, 1, 10)+0.5);
+  float alpha = map(dp, highMin, highMax, 50, 255);
+
+  x = x +150;
+  pg.noFill();
+  if (dp < 0) {
+    pg.stroke(c, alpha);
+  } else {
+    if (white)
+      pg.stroke(0, alpha);
+    else
+      pg.stroke(255, alpha);
+  }
+
+  int rr = 7*scale;
+  for (int i = 0; i <= numCircles; i++) {
+    pg.ellipse(x, 2*height/3-numCircles*7*scale, rr*1.5, rr);
+    rr +=7*scale;
+  }
+}
+
+void drawStar(int x, TableRow row, PGraphics pg) {
+  float dp = row.getFloat("high2");
+  float rad = 5*scale; 
+  float numPoints = (int)(map(dp, high2Min, high2Max, 1, 5)+0.5);
+  float alpha = map(dp, high2Min, high2Max, 50, 255);
+
+  pushMatrix();
+  translate(x+150, height/4+rad);
+
+  float angle=TWO_PI/(float)numPoints;
+
+  pg.stroke(c, alpha);
+
+  for (int i=0; i<numPoints; i++)
+  {
+    pg.line(0, 0, rad*sin(angle*i)*1, rad*cos(angle*i)*1);
+  }  
+  popMatrix();
+}
+
+
 
 void keyPressed()
 {
