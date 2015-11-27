@@ -19,10 +19,11 @@ float highMin = -0.7;
 float high2Max = -0.9;
 float high2Min = -0.7;
 
+String artist = "amy";
 void setup() {
 
   importTable();
-  size(w*scale, 250*scale);//, PDF, "file.pdf"); 
+  size(w*scale, 250*scale);//, PDF, artist+".pdf"); 
   noLoop();
   background(255);
 }
@@ -31,7 +32,8 @@ void setup() {
 void draw() {
   //scale(5);
   drawStuff(this.g);
-  // exit();
+  println("done...");
+ // exit();
 }
 
 void drawStuff(PGraphics pg) {
@@ -48,7 +50,7 @@ void drawStuff(PGraphics pg) {
 
 
 void importTable() {
-  data = loadTable("amy.csv", "header");
+  data = loadTable(artist+".csv", "header");
   streifen = data.getRowCount();
   w = streifen*l;
 }
@@ -65,19 +67,18 @@ void drawHill(int i, TableRow row, PGraphics pg) {
     pg.fill(0, alpha);
   }
   pg.noStroke();
-
-  pg.ellipse(i*l, height+rad/10, rad *1.5, rad);
+  pg.ellipse(i*l+50, height+rad/10, rad *1.5, rad);
   stroke(255, 0, 0);
 }
 
 void drawStar(int x, TableRow row, PGraphics pg) {
   float dp = row.getFloat("high2");
-  float rad = 5; 
+  float rad = 5*scale; 
   float numPoints = (int)(map(dp, high2Min, high2Max, 1, 5)+0.5);
   float alpha = map(dp, high2Min, high2Max, 10, 255);
 
   pushMatrix();
-  translate(x, height/4+rad);
+  translate(x+50, height/4+rad);
 
   float angle=TWO_PI/(float)numPoints;
 
@@ -94,20 +95,20 @@ void drawStar(int x, TableRow row, PGraphics pg) {
 void drawCloud(int x, TableRow row, PGraphics pg) {
 
   float dp = row.getFloat("high");
-  int rad = (int)(map(dp, highMin, highMax, 1, 10)+0.5);
+  int numCircles = (int)(map(dp, highMin, highMax, 1, 10)+0.5);
   float alpha = map(dp, highMin, highMax, 100, 255);
 
 
-
+ x = x +50;
   pg.noFill();
   if (dp < 0)
     pg.stroke(166, 215, 255, alpha);
   else
     pg.stroke(0, alpha);
 
-  int rr = 5;
-  for (int i = 0; i <= rad; i++) {
-    pg.ellipse(x, height/2-rad, rr*1.5, rr);
+  int rr = 5*scale;
+  for (int i = 0; i <= numCircles; i++) {
+    pg.ellipse(x, height/2-numCircles, rr*1.5, rr);
     rr +=5*scale;
   }
 }
@@ -116,9 +117,8 @@ void drawCloud(int x, TableRow row, PGraphics pg) {
 void drawFlower(int x, TableRow row, PGraphics pg) {
   pushMatrix();
 
-
-  float dp = row.getFloat("mid");
-  float rad = map(abs(dp), midMin, midMax, 50*scale, 90*scale);    
+x = x+50;
+  float dp = row.getFloat("mid");    
   float alpha = map(abs(dp), midMin, midMax, 10, 255);
   int points = (int)(map(abs(dp), midMin, midMax, 1, 14)+0.5);
 
@@ -129,15 +129,16 @@ void drawFlower(int x, TableRow row, PGraphics pg) {
     pg.stroke(0, alpha);
 
 
-  translate(x, height-rad);
+  translate(x, height-60*scale);
   pg.line(0, height, 0, 0);
 
 
   float angle=(PI/(float)points);
   rotate(-PI/2);
+  int lenght = 20* scale;
   for (int i=0; i<points; i++)
   {
-    pg.line(0, 0, 15*sin(angle*i)*1, 15*cos(angle*i)*1);
+    pg.line(0, 0, lenght*sin(angle*i)*1, lenght*cos(angle*i)*1);
   }   
   popMatrix();
 }
